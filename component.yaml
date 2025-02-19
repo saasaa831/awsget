@@ -1,0 +1,15 @@
+Resources:
+  web:
+      Type: 'AWS::EC2::Instance'
+
+      Configuration:
+        Instance:
+          Properties:
+            ImageId:
+              Fn::Pipeline::ImageId:
+                Name: {{ vars.Namex }}
+            InstanceType: {{ vars.InstanceType }}
+            SubnetId:
+              Fn::Pipeline::SubnetId:
+                NetworkZone: private
+

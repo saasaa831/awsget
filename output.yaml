@@ -1,0 +1,14 @@
+Resources:
+  web:
+      Type: 'AWS::EC2::Instance'
+
+      Configuration:
+        Instance:
+          Properties:
+            ImageId:
+              Fn::Pipeline::ImageId:
+                Name: amazon-linux-2
+            InstanceType: t3.small
+            SubnetId:
+              Fn::Pipeline::SubnetId:
+                NetworkZone: private

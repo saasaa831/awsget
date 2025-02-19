@@ -1,0 +1,3 @@
+_defaults:
+  InstanceType: t3.small
+  Namex: amazon-linux-2
