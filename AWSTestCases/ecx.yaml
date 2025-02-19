@@ -1,0 +1,25 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: CloudFormation template to import existing resources
+
+Resources:
+  InstanceSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    DeletionPolicy: Retain
+    Properties:
+      GroupDescription: Enable SSH access
+      VpcId: vpc-0eexempl4c70  # Replace with your VPC ID
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0  # Adjust as needed
+
+  EC2Instance:
+    Type: 'AWS::EC2::Instance'
+    DeletionPolicy: Retain
+    Properties:
+      InstanceType: t3.micro
+      ImageId: ami-0abcdef1234567890  # Replace with your AMI ID
+      SubnetId: subnet-0bb1c79de3EXAMPLE  # Replace with your Subnet ID
+      SecurityGroupIds:
+        - !Ref InstanceSecurityGroup
