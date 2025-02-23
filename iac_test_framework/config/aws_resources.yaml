@@ -1,0 +1,51 @@
+AWS::EC2::Instance:
+  client: ec2
+  describe_method: describe_instances
+  id_param: InstanceIds
+  property_mapping:
+    InstanceType: InstanceType
+    ImageId: ImageId
+    KeyName: KeyName
+  defaults:
+    Monitoring: {State: disabled}
+  attribute_mapping:
+    PrivateIp: PrivateIpAddress
+  tag_key: Tags
+
+AWS::AutoScaling::AutoScalingGroup:
+  client: autoscaling
+  describe_method: describe_auto_scaling_groups
+  id_param: AutoScalingGroupNames
+  property_mapping:
+    MinSize: MinSize
+    MaxSize: MaxSize
+    DesiredCapacity: DesiredCapacity
+    LaunchConfigurationName: LaunchConfigurationName
+  defaults:
+    HealthCheckType: EC2
+  attribute_mapping: {}
+  tag_key: Tags
+
+AWS::ElasticLoadBalancingV2::LoadBalancer:
+  client: elbv2
+  describe_method: describe_load_balancers
+  id_param: LoadBalancerArns
+  property_mapping:
+    Scheme: Scheme
+  defaults:
+    Type: application
+  attribute_mapping:
+    DNSName: DNSName
+  tag_key: Tags
+
+AWS::ElasticLoadBalancingV2::Listener:
+  client: elbv2
+  describe_method: describe_listeners
+  id_param: ListenerArns
+  property_mapping:
+    Port: Port
+    Protocol: Protocol
+  defaults:
+    DefaultActions: [{Type: forward}]
+  attribute_mapping: {}
+  tag_key: Tags
