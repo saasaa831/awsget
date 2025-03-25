@@ -27,29 +27,14 @@ def generate_html_report(test_suites, report_title="QA Test Report", output_file
                 passed += sum(1 for test in test_results if test["status"].lower() == "pass")
                 failed += sum(1 for test in test_results if test["status"].lower() == "fail")
                 skipped += sum(1 for test in test_results if test["status"].lower() == "skip")
-
-        sidebar_content = f"""
-        <div class="sidebar">
-            <h3 style="text-align:center;">Test Suites</h3>
-            <div style="text-align:left; padding-left: 20px;">
-                <span style="background-color: green; display: inline-block; width: 15px; height: 15px; border-radius: 50%; margin-right: 5px;"></span> Pass: {passed} / {total_cases}<br>
-                <span style="background-color: red; display: inline-block; width: 15px; height: 15px; border-radius: 50%; margin-right: 5px;"></span> Fail: {failed} / {total_cases}<br>
-                <span style="background-color: orange; display: inline-block; width: 15px; height: 15px; border-radius: 50%; margin-right: 5px;"></span> Skipped: {skipped} / {total_cases}<br>
+        side_content = f"""
+            <div style="text-align:center; padding-left: 20px;">
+                <span style="background-color: green; display: inline-block; width: 15px; height: 15px; border-radius: 50%; margin-right: 5px;"></span> Pass: {passed} / {total_cases} 
+                <span style="background-color: red; display: inline-block; width: 15px; height: 15px; border-radius: 50%; margin-right: 5px;"></span> Fail: {failed} / {total_cases} 
+                <span style="background-color: orange; display: inline-block; width: 15px; height: 15px; border-radius: 50%; margin-right: 5px;"></span> Skipped: {skipped} / {total_cases} 
             </div>
-            <ul class="suite-list">
         """
-        for suite_name, versions in test_suites.items():
-            suite_id = suite_name.replace(" ", "_").lower()
-            sidebar_content += f"""
-            <li>
-                <span class="suite-header" onclick="toggleSuite('{suite_id}')">{suite_name}</span>
-                <ul id="{suite_id}" class="suite-items hidden">
-            """
-            for i, (version, _) in enumerate(versions):
-                sidebar_content += f"<li><a href='#' onclick='showReport(\"report_{suite_id}_{i}\")'>{suite_name} - v{version}</a></li>"
-            sidebar_content += "</ul></li>"
-        sidebar_content += "</ul></div>"
-        return sidebar_content
+        return side_content
 
     def generate_test_table(test_results):
         """Generates an HTML table for test results."""
@@ -75,7 +60,7 @@ def generate_html_report(test_suites, report_title="QA Test Report", output_file
                 <td>{test['actual_results']}</td>
                 <td>{test['remarks']}</td>
             </tr>
-            """ for test in sorted(test_results, key=lambda x: x['test_name'])
+            """ for test in test_results # for test in sorted(test_results, key=lambda x: x['test_name'])
         ))
 
     def generate_test_suite_summary(test_results):
@@ -117,37 +102,20 @@ def generate_html_report(test_suites, report_title="QA Test Report", output_file
             <title>{report_title}</title>
             <style>
                 body {{ font-family: Arial, sans-serif; display: flex; margin: 0; }}
-                .sidebar {{ width: 300px; background: #333; color: white; height: 100vh; padding-top: 20px; position: fixed; overflow-y: auto; }}
-                .sidebar ul {{ list-style: none; padding: 0; }}
-                .suite-header {{ cursor: pointer; padding: 10px; display: block; font-weight: bold; background: #444; }}
-                .suite-header:hover {{ background: #575757; }}
-                .suite-items {{ display: none; margin-left: 20px; }}
-                .suite-items li a {{ display: block; padding: 5px; color: white; text-decoration: none; }}
-                .suite-items li a:hover {{ background: #575757; }}
-                .content {{ margin-left: 300px; padding: 20px; width: calc(100% - 270px); }}
-                .hidden {{ display: none; }}
+                .content {{ margin-left: 0px; padding: 20px; width: calc(100%); }}
                 table {{ width: 100%; border-collapse: collapse; margin-top: 10px; }}
                 th, td {{ border: 1px solid #ddd; padding: 8px; text-align: center; }}
                 .pass {{ background-color: #e6ffe6; }} /* Light green for pass */
                 .fail {{ background-color: #ffe6e6; }} /* Light red for fail */
                 .skip {{ background-color: #fff3e6; }} /* Light orange for skip */
             </style>
-            <script>
-                function toggleSuite(id) {{
-                    var suite = document.getElementById(id);
-                    suite.style.display = suite.style.display === 'block' ? 'none' : 'block';
-                }}
-                function showReport(id) {{
-                    document.querySelectorAll('.report-section').forEach(el => el.classList.add('hidden'));
-                    document.getElementById(id).classList.remove('hidden');
-                }}
-            </script>
+           
         </head>
         <body>
-            {generate_sidebar()}
             <div class="content">
                 <h2 align="center">{report_title}</h2>
                 <p align="center">Generated on: {timestamp}</p>
+                {generate_sidebar()}
                 {generate_test_sections()}
             </div>
         </body>
@@ -173,7 +141,7 @@ test_suites = {
             {"test_name": "Signup Test", "status": "Fail", "execution_time": "3.5",
              "expected_results": "Validation error", "actual_results": "Unexpected error", "remarks": "Bug"},
             {"test_name": "Password Reset Test", "status": "Skip", "execution_time": "N/A",
-             "expected_results": "Reset email sent", "actual_results": "N/A", "remarks": "Not implemented"}
+             "expected_results": "Reset email sentReset email sentReset email sentReset email sentReset email sentReset email sentReset email sentReset email sentReset email sentReset email sent", "actual_results": "N/A", "remarks": "Not implemented"}
         ])
     ],
     "Smoke Tests": [
