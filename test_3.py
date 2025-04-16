@@ -20,11 +20,11 @@ def generate_html_report(test_suites, report_title="AMI Test Report(QA)", output
         sidebar = f"""
         <div class="sidebar">
             <h3 style="text-align:center; color: white;">Test Suites</h3>
-            <div class="summary-circles" style="text-align:left; padding-left: 20px;">
-                <span><center><span class="circle total" onclick="filterByStatus('all')">Total: {total_cases}</span></center><br>
-                <center><span class="circle pass" onclick="filterByStatus('pass')">Pass: {passed}</span>
-                <span class="circle fail" onclick="filterByStatus('fail')">Fail: {failed}</span>
-                <span class="circle skip" onclick="filterByStatus('skip')">Skip: {skipped}</span></center></span>
+            <div class="summary-circles" style="text-align:left; padding-left: 20px; color: white">
+                <span class="smcircle total" onclick="filterByStatus('all')"><center>Total: {total_cases}</center></span>
+                <span class="smcircle pass" onclick="filterByStatus('pass')"><center>Pass: {passed}</center></span>
+                <span class="smcircle fail" onclick="filterByStatus('fail')"><center>Fail: {failed}</center></span>
+                <span class="smcircle skip" onclick="filterByStatus('skip')"><center>Skip: {skipped}</center></span>
             </div>
             <ul class="suite-list">
         """
@@ -146,6 +146,20 @@ def generate_html_report(test_suites, report_title="AMI Test Report(QA)", output
             .circle.skip {{ background-color: light orange;  }}
             .circle.total {{ background-color: lightblue;  }}
             .table-header {{ background-color: #4CAF50;  color: white; }}
+            .smcircle {{
+                display: inline-block;
+                margin-right: 5px;
+                border-radius: 50px;
+                width: 100px;
+                height: 15px;
+                font-size: 14px;
+                font-weight: bold;
+                cursor: pointer;
+            }}
+            .smcircle.pass {{ background-color: green;}}
+            .smcircle.fail {{ background-color: red; }}
+            .smcircle.skip {{ background-color: orange;  }}
+            .smcircle.total {{ background-color: blue;  }}
         </style>
         <script>
             function toggleSuite(id) {{
