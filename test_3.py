@@ -20,11 +20,11 @@ def generate_html_report(test_suites, report_title="AMI Test Report(QA)", output
         sidebar = f"""
         <div class="sidebar">
             <h3 style="text-align:center; color: white;">Test Suites</h3>
-            <div class="summary-circles">
-                <span class="circle total" onclick="filterByStatus('all')">Total: {total_cases}</span>
-                <span class="circle pass" onclick="filterByStatus('pass')">Pass: {passed}</span>
+            <div class="summary-circles" style="text-align:left; padding-left: 20px;">
+                <span><center><span class="circle total" onclick="filterByStatus('all')">Total: {total_cases}</span></center><br>
+                <center><span class="circle pass" onclick="filterByStatus('pass')">Pass: {passed}</span>
                 <span class="circle fail" onclick="filterByStatus('fail')">Fail: {failed}</span>
-                <span class="circle skip" onclick="filterByStatus('skip')">Skip: {skipped}</span>
+                <span class="circle skip" onclick="filterByStatus('skip')">Skip: {skipped}</span></center></span>
             </div>
             <ul class="suite-list">
         """
