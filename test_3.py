@@ -19,7 +19,7 @@ def generate_html_report(test_suites, report_title="QA Test Report", output_file
 
         sidebar = f"""
         <div class="sidebar">
-            <h3 style="text-align:center;">Test Suites</h3>
+            <h3 style="text-align:center; color: white;">Test Suites</h3>
             <div class="summary-circles">
                 <span class="circle total" onclick="filterByStatus('all')">Total: {total_cases}</span>
                 <span class="circle pass" onclick="filterByStatus('pass')">Pass: {passed}</span>
@@ -106,9 +106,9 @@ def generate_html_report(test_suites, report_title="QA Test Report", output_file
         <title>{report_title}</title>
         <style>
             body {{ font-family: Arial, sans-serif; display: flex; margin: 0; }}
-            .sidebar {{ width: 300px; background: #333; color: white; height: 100vh; padding-top: 20px; position: fixed; overflow-y: auto; }}
+            .sidebar {{ width: 300px; background: #333; height: 100vh; padding-top: 20px; position: fixed; overflow-y: auto; }}
             .sidebar ul {{ list-style: none; padding: 0; }}
-            .suite-header {{ cursor: pointer; padding: 10px; display: block; font-weight: bold; background: #444; }}
+            .suite-header {{ cursor: pointer; padding: 10px; display: block; font-weight: bold; background: #444; color: white; }}
             .suite-header:hover {{ background: #575757; }}
             .suite-items {{ display: none; margin-left: 20px; }}
             .suite-items li a {{ display: block; padding: 5px; color: white; text-decoration: none; }}
@@ -130,11 +130,11 @@ def generate_html_report(test_suites, report_title="QA Test Report", output_file
                 font-weight: bold;
                 cursor: pointer;
             }}
-            .circle.pass {{ background-color: green; color: white; }}
-            .circle.fail {{ background-color: red; color: white; }}
-            .circle.skip {{ background-color: orange; color: white; }}
-            .circle.total {{ background-color: blue; color: white; }}
-            .table-header {{ background-color: #4CAF50; color: white; }}
+            .circle.pass {{ background-color: lightgreen;}}
+            .circle.fail {{ background-color: lightred; }}
+            .circle.skip {{ background-color: lightorange;  }}
+            .circle.total {{ background-color: lightblue;  }}
+            .table-header {{ background-color: #4CAF50;  }}
         </style>
         <script>
             function toggleSuite(id) {{
