@@ -2,20 +2,20 @@ import os
 import datetime
 
 
-def generate_html_report(test_suites, report_title="QA Test Report", output_file="qa_test_report.html"):
+def generate_html_report(test_suites, report_title="AMI Test Report(QA)", output_file="qa_test_report.html", runner_version="v1.0"):
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     def get_status_class(status):
-        return {"pass": "pass", "fail": "fail", "skip": "skip"}.get(status.lower(), "")
+        return {"passed": "pass", "failed": "fail", "skipped": "skip"}.get(status.lower(), "")
 
     def generate_sidebar():
         total_cases = passed = failed = skipped = 0
         for versions in test_suites.values():
             for _, test_results in versions:
                 total_cases += len(test_results)
-                passed += sum(1 for t in test_results if t["status"].lower() == "pass")
-                failed += sum(1 for t in test_results if t["status"].lower() == "fail")
-                skipped += sum(1 for t in test_results if t["status"].lower() == "skip")
+                passed += sum(1 for t in test_results if t["status"].lower() == "passed")
+                failed += sum(1 for t in test_results if t["status"].lower() == "failed")
+                skipped += sum(1 for t in test_results if t["status"].lower() == "skipped")
 
         sidebar = f"""
         <div class="sidebar">
@@ -41,37 +41,48 @@ def generate_html_report(test_suites, report_title="QA Test Report", output_file
         sidebar += "</ul></div>"
         return sidebar
 
+    def format_results(results):
+        if results:
+            if isinstance(results, list):
+                text = ',<br>'.join(str(item) for item in results)
+                return text
+            elif isinstance(results, dict):
+                text = ',<br>'.join(f"{key}: {value}" for key, value in results.items())
+                return text
+            else:
+                return results
+        else:
+            return ''
+
     def generate_test_table(test_results):
         return """
         <table>
             <tr class="table-header">
-                <th>Test Name</th>
-                <th>Status</th>
-                <th>Exec Time (s)</th>
-                <th>Expected</th>
-                <th>Actual</th>
-                <th>Remarks</th>
+                <th style="width: 20%">Test Name</th>
+                <th style="width: 10%">Status</th>
+                <th style="width: 25%">Expected</th>
+                <th style="width: 30%">Actual</th>
+                <th style="width: 20%">Remarks</th>
             </tr>
             {}
         </table>
         """.format("".join(
             f"""
             <tr class='{get_status_class(test['status'])}'>
-                <td>{test['test_name']}</td>
-                <td>{test['status']}</td>
-                <td>{test.get('execution_time', 'N/A')}</td>
-                <td>{test['expected_results']}</td>
-                <td>{test['actual_results']}</td>
-                <td>{test['remarks']}</td>
+                <td style="width: 20%">{test['test_name']}</td>
+                <td style="width: 10%"><b>{test['status']}</b></td>
+                <td style="width: 25%">{test['expected_results']}</td>
+                <td style="width: 30%">{test['actual_results']}</td>
+                <td style="width: 20%">{test['remarks']}</td>
             </tr>
-            """ for test in sorted(test_results, key=lambda x: x['test_name'])
+            """ for test in test_results  # for test in sorted(test_results, key=lambda x: x['test_name'])
         ))
 
     def generate_test_suite_summary(test_results, suite_block_id):
         total = len(test_results)
-        passed = sum(1 for t in test_results if t["status"].lower() == "pass")
-        failed = sum(1 for t in test_results if t["status"].lower() == "fail")
-        skipped = sum(1 for t in test_results if t["status"].lower() == "skip")
+        passed = sum(1 for t in test_results if t["status"].lower() == "passed")
+        failed = sum(1 for t in test_results if t["status"].lower() == "failed")
+        skipped = sum(1 for t in test_results if t["status"].lower() == "skipped")
 
         return f"""
         <div class="summary-circles" data-suite="{suite_block_id}">
@@ -115,8 +126,8 @@ def generate_html_report(test_suites, report_title="QA Test Report", output_file
             .suite-items li a:hover {{ background: #575757; }}
             .content {{ margin-left: 300px; padding: 20px; width: calc(100% - 270px); }}
             .hidden {{ display: none; }}
-            table {{ width: 100%; border-collapse: collapse; margin-top: 10px; }}
-            th, td {{ border: 1px solid #ddd; padding: 8px; text-align: center; }}
+            table {{ width: 100%; border-collapse: collapse; margin-top: 10px; table-layout fixed; word-wrap: break-word;}}
+            th, td {{ border: 1px solid #ddd; padding: 8px; text-align: center; word-break: break-word; overflow-wrap: break-word;}}
             .pass {{ background-color: #e6ffe6; }}
             .fail {{ background-color: #ffe6e6; }}
             .skip {{ background-color: #fff3e6; }}
@@ -130,11 +141,11 @@ def generate_html_report(test_suites, report_title="QA Test Report", output_file
                 font-weight: bold;
                 cursor: pointer;
             }}
-            .circle.pass {{ background-color: lightgreen;}}
-            .circle.fail {{ background-color: lightred; }}
-            .circle.skip {{ background-color: lightorange;  }}
+            .circle.pass {{ background-color: light green;}}
+            .circle.fail {{ background-color: light red; }}
+            .circle.skip {{ background-color: light orange;  }}
             .circle.total {{ background-color: lightblue;  }}
-            .table-header {{ background-color: #4CAF50;  }}
+            .table-header {{ background-color: #4CAF50;  color: white; }}
         </style>
         <script>
             function toggleSuite(id) {{
@@ -173,6 +184,7 @@ def generate_html_report(test_suites, report_title="QA Test Report", output_file
         {generate_sidebar()}
         <div class="content">
             <h2 align="center">{report_title}</h2>
+            <h3 align="center">Runner-Version: {runner_version}</h3>
             <p align="center">Generated on: {timestamp}</p>
             {generate_test_sections()}
         </div>
@@ -190,25 +202,25 @@ def generate_html_report(test_suites, report_title="QA Test Report", output_file
 test_suites = {
     "Regression Suite": [
         ("1.0", [
-            {"test_name": "Login Test", "status": "Pass", "execution_time": "2.1", "expected_results": "Success",
+            {"test_name": "Login Test", "status": "Passed", "execution_time": "2.1", "expected_results": "Success",
              "actual_results": "Success", "remarks": "OK"},
-            {"test_name": "Logout Test", "status": "Pass", "execution_time": "1.5", "expected_results": "Success",
+            {"test_name": "Logout Test", "status": "Passed", "execution_time": "1.5", "expected_results": "Success",
              "actual_results": "Success", "remarks": "OK"}
         ]),
         ("2.0", [
-            {"test_name": "Signup Test", "status": "Fail", "execution_time": "3.5",
+            {"test_name": "Signup Test", "status": "Failed", "execution_time": "3.5",
              "expected_results": "Validation error", "actual_results": "Unexpected error", "remarks": "Bug"},
-            {"test_name": "Password Reset Test", "status": "Skip", "execution_time": "N/A",
+            {"test_name": "Password Reset Test", "status": "Skipped", "execution_time": "N/A",
              "expected_results": "Reset email sent", "actual_results": "N/A", "remarks": "Not implemented"}
         ])
     ],
     "Smoke Tests": [
         ("1.1", [
-            {"test_name": "Cart Test", "status": "Pass", "execution_time": "1.8", "expected_results": "Item added",
-             "actual_results": "Item added", "remarks": "Success"}
+            {"test_name": "Cart Test", "status": "Passed", "execution_time": "1.8", "expected_results": "Item added",
+             "actual_results": "Item addedReset email sentReset email sentReset email sent,Reset email sentReset email sentReset email sent,Reset email sentReset email sent", "remarks": "Success"}
         ])
     ]
 }
 
 # Generate the report
-generate_html_report(test_suites, report_title="QA Test Report", output_file="qa_test_report.html")
+generate_html_report(test_suites)
