@@ -61,47 +61,47 @@ def generate_html_report(test_suites, report_title="AMI Test Report(QA)", output
     def get_random_id():
         return ''.join(random.choices(string.ascii_letters + string.digits, k=8))
 
-    def format_remarks(text):
-        '''print(text)
-        if len(text) <= 25:
-            return text
-        link_id = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
-        return f"<a href=\"#\" onclick=\"showPopup('{link_id}')\">View Details</a><div id=\"{link_id}\" class=\"modal hidden\"><div class=\"modal-content\"><span class=\"close\" onclick=\"closePopup('{link_id}')\">&times;</span><pre>{text}</pre></div></div>"
-        '''
-        remarks = text
-        if len(remarks) > 25:
-            popup_id = get_random_id()
-            short_text = html.escape(remarks[:25]) + "..."
-            full_text = html.escape(remarks).replace('\n', '<br>')
-            link = f"<a href='#' onclick=\"showLogDialog('{popup_id}')\">view log</a>"
-            remarks_html = f"{short_text} {link}<div id='{popup_id}' class='modal hidden'><div class='modal-content'><span class='close' onclick='closeLogDialog(\"{popup_id}\")'>&times;</span><pre>{full_text}</pre></div></div>"
-        else:
-            remarks_html = html.escape(remarks)
-        return remarks_html
-
     def generate_test_table(test_results):
-        return """
-        <table>
-            <tr class="table-header">
-                <th style="width: 20%">Test Name</th>
-                <th style="width: 10%">Status</th>
-                <th style="width: 25%">Expected</th>
-                <th style="width: 30%">Actual</th>
-                <th style="width: 20%">Remarks</th>
-            </tr>
-            {}
-        </table>
-        """.format("".join(
-            f"""
+        def get_random_id():
+            return ''.join(random.choices(string.ascii_letters + string.digits, k=8))
+
+        rows = ""
+        test_no = 1
+        for test in test_results:
+            remarks = test['remarks']
+            if len(remarks) > 25:
+                popup_id = get_random_id()
+                short_text = html.escape(remarks[:25]) + "..."
+                full_text = html.escape(remarks).replace('\n', '<br>')
+                link = f"<a href='#' onclick=\"showLogDialog('{popup_id}')\">view log</a>"
+                remarks_html = f"{short_text} {link}<div id='{popup_id}' class='modal hidden'><div class='modal-content'><span class='close' onclick='closeLogDialog(\"{popup_id}\")'>&times;</span><pre>{full_text}</pre></div></div>"
+            else:
+                remarks_html = html.escape(remarks)
+
+            rows += f"""
             <tr class='{get_status_class(test['status'])}'>
+                <td style="width: 3%">{str(test_no)}</td>
                 <td style="width: 20%">{test['test_name']}</td>
                 <td style="width: 10%"><b>{test['status']}</b></td>
-                <td style="width: 25%">{format_results(test['expected_results'])}</td>
-                <td style="width: 30%">{format_results(test['actual_results'])}</td>
-                <td style="width: 20%">{format_remarks(test['remarks'])}</td>
+                <td style="width: 23%">{test['expected_results']}</td>
+                <td style="width: 27%">{test['actual_results']}</td>
+                <td style="width: 20%">{remarks_html}</td>
             </tr>
-            """ for test in test_results  # for test in sorted(test_results, key=lambda x: x['test_name'])
-        ))
+            """
+            test_no += 1
+        return f"""
+        <table>
+            <tr class="table-header">
+                <th style="width: 3%">Tno</th>
+                <th style="width: 20%">Test Description</th>
+                <th style="width: 10%">Status</th>
+                <th style="width: 23%">Expected</th>
+                <th style="width: 27%">Actual</th>
+                <th style="width: 20%">Remarks</th>
+            </tr>
+            {rows}
+        </table>
+        """
 
     def generate_test_suite_summary(test_results, suite_block_id):
         total = len(test_results)
@@ -302,7 +302,7 @@ test_suites = {
         ("1.1", [
             {"test_name": "Cart Test", "status": "Passed", "execution_time": "1.8", "expected_results": "Item added",
              "actual_results": "Item addedReset email sentReset email sentReset email sent,Reset email sentReset email sentReset email sent,Reset email sentReset email sent",
-             "remarks": "Success"}
+             "remarks": "SuccessSuccessSuccessSuccess"}
         ])
     ]
 }
